@@ -21,4 +21,43 @@ describe("formatResultsMarkdown", () => {
         const output = formatResultsMarkdown([]);
         expect(output).toBe("No results found.");
     });
+
+    test("decodes HTML entities", () => {
+        const results: SearchResult[] = [
+            {
+                title: "Title &quot;with quotes&quot;",
+                url: "https://example.com/1",
+                description: "Snippet &amp; more &lt;stuff&gt;",
+            },
+        ];
+        const output = formatResultsMarkdown(results);
+        expect(output).toContain('Title "with quotes"');
+        expect(output).toContain("Snippet & more");
+    });
+
+    test("converts HTML tags to markdown", () => {
+        const results: SearchResult[] = [
+            {
+                title: "Title with <strong>bold</strong>",
+                url: "https://example.com/1",
+                description: "Snippet with <em>emphasis</em> and <a href='#'>link</a>",
+            },
+        ];
+        const output = formatResultsMarkdown(results);
+        expect(output).toContain("Title with **bold**");
+        expect(output).toContain("Snippet with _emphasis_ and [link](#)");
+    });
+
+    test("handles mixed HTML entities and tags", () => {
+        const results: SearchResult[] = [
+            {
+                title: "&quot;<strong>Important</strong>&quot; News",
+                url: "https://example.com/1",
+                description: "Read &nbsp;more&hellip;",
+            },
+        ];
+        const output = formatResultsMarkdown(results);
+        expect(output).toContain('"**Important**" News');
+        expect(output).toContain("Read more…");
+    });
 });
