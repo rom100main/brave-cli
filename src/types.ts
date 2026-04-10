@@ -8,7 +8,6 @@ export interface SearchConfig {
     country: string | null;
     freshness: FreshnessLevel | null;
     safeSearch: SafeSearchLevel;
-    extraSnippets: boolean;
 }
 
 export interface SearchResult {
