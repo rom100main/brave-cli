@@ -1,13 +1,14 @@
 export type SafeSearchLevel = "off" | "moderate" | "strict";
-export type DfLevel = "day" | "week" | "month" | "year";
+export type FreshnessLevel = "day" | "week" | "month" | "year";
 export type OutputFormat = "markdown" | "json";
 
 export interface SearchConfig {
     query: string;
     maxResults: number;
-    region: string | null;
+    country: string | null;
+    freshness: FreshnessLevel | null;
     safeSearch: SafeSearchLevel;
-    df: DfLevel | null;
+    extraSnippets: boolean;
 }
 
 export interface SearchResult {
