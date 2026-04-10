@@ -1,10 +1,10 @@
-import { decode } from "he";
+import he from "he";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 
 import type { SearchResult } from "../types.js";
 
 function cleanText(text: string): string {
-    const decoded = decode(text);
+    const decoded = he.decode(text);
     return NodeHtmlMarkdown.translate(decoded);
 }
 
