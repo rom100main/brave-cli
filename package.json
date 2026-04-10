@@ -1,34 +1,33 @@
 {
-    "name": "@rom100main/ddg-cli",
+    "name": "@rom100main/brave-cli",
     "version": "1.0.0",
-    "description": "CLI tool for searching the web using DuckDuckGo, includes a skill for AI agents.",
+    "description": "CLI tool for searching the web using Brave Search API, includes a skill for AI agents.",
     "author": "rom100main",
     "keywords": [
         "cli",
         "search",
-        "duckduckgo",
-        "ddg",
+        "brave",
+        "brave-search",
         "skills",
         "agent-skills"
     ],
-    "homepage": "https://github.com/rom100main/ddg-cli#readme",
+    "homepage": "https://github.com/rom100main/brave-cli#readme",
     "bugs": {
-        "url": "https://github.com/rom100main/ddg-cli/issues"
+        "url": "https://github.com/rom100main/brave-cli/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/rom100main/ddg-cli.git"
+        "url": "git+https://github.com/rom100main/brave-cli.git"
     },
     "license": "MIT",
     "access": "public",
     "bin": {
-        "ddg": "./dist/index.js"
+        "brave": "./dist/index.js"
     },
     "preferGlobal": true,
     "dependencies": {
         "commander": "^14.0.3",
         "defuddle": "^0.15.0",
-        "linkedom": "^0.18.12",
         "open": "^11.0.0"
     },
     "type": "module",
