@@ -14,7 +14,7 @@ export interface SearchConfig {
 export interface SearchResult {
     title: string;
     url: string;
-    snippet: string;
+    description: string;
 }
 
 export interface SearchResponse {
