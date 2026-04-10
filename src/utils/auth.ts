@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 const CONFIG_DIR = path.join(process.env.HOME || process.env.USERPROFILE || "~", ".brave-cli");
-const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
+export const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
 
 export interface Config {
     apiKey?: string;

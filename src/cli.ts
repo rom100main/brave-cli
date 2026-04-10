@@ -9,7 +9,7 @@ import { formatResultsJson } from "./output/json.js";
 import { formatResultsMarkdown } from "./output/markdown.js";
 import { search } from "./search/api.js";
 import type { FreshnessLevel, SafeSearchLevel, SearchConfig } from "./types.js";
-import { API_KEY_URL, saveApiKey, validateApiKeyFormat } from "./utils/auth.js";
+import { API_KEY_URL, CONFIG_FILE, saveApiKey, validateApiKeyFormat } from "./utils/auth.js";
 
 interface CliOptions {
     count?: string;
@@ -119,6 +119,7 @@ async function handleAuth(): Promise<void> {
 
         saveApiKey(apiKey);
         console.log("\nAPI key saved successfully!");
+        console.log(`Saved to: ${CONFIG_FILE}`);
         console.log("You can now use the brave search command.");
     });
 }
