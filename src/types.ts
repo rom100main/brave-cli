@@ -4,7 +4,7 @@ export type OutputFormat = "markdown" | "json";
 
 export interface SearchConfig {
     query: string;
-    maxResults: number;
+    count: number;
     country: string | null;
     freshness: FreshnessLevel | null;
     safeSearch: SafeSearchLevel;

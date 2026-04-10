@@ -24,7 +24,7 @@ npm install -g ddg-cli
 
 ```bash
 ddg "typescript tutorial"
-ddg "react hooks" --max-results 10
+ddg "react hooks" --count 10
 ```
 
 ### Advanced Options
@@ -48,7 +48,7 @@ ddg "search terms" --json
 
 | Option                  | Description                       | Values                          |
 | ----------------------- | --------------------------------- | ------------------------------- |
-| `--max-results <n>`     | Maximum results to return         | Positive integer (default: 5)   |
+| `--count <n>`           | Number of results to return       | Positive integer (default: 5)   |
 | `--region <code>`       | Region code for localized results | `us-en`, `uk-en`, `fr-fr`, etc. |
 | `--df <level>`          | Date filter                       | `day`, `week`, `month`, `year`  |
 | `--safe-search <level>` | Safe search level                 | `off`, `moderate`, `strict`     |

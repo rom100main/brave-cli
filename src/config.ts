@@ -1,6 +1,6 @@
 import type { SafeSearchLevel, FreshnessLevel } from "./types.js";
 
-export const DEFAULT_MAX_RESULTS = 5;
+export const DEFAULT_COUNT = 5;
 export const DEFAULT_SAFE_SEARCH: SafeSearchLevel = "off";
 export const DEFAULT_FRESHNESS: FreshnessLevel | null = null;
 
