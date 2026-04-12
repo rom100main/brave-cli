@@ -39,6 +39,7 @@ export function searchView(state: TuiState, callbacks: SearchViewCallbacks) {
                   id: "results-list",
                   items: state.results,
                   itemHeight: 4,
+                  focusConfig: { contentStyle: { underline: false } },
                   renderItem: (result: SearchResult, index: number, focused: boolean) =>
                       ui.column({ gap: 0 }, [
                           ui.text(focused ? `> ${result.title}` : `  ${result.title}`, {
@@ -118,6 +119,7 @@ function countryModal(state: TuiState, callbacks: SearchViewCallbacks) {
                 id: "country-list",
                 items: filtered,
                 itemHeight: 1,
+                focusConfig: { contentStyle: {} },
                 renderItem: (country: Country, index: number, focused: boolean) =>
                     ui.text(focused ? `> ${country.label} (${country.code})` : `  ${country.label} (${country.code})`, {
                         key: country.code,

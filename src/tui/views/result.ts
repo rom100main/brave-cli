@@ -40,6 +40,7 @@ export function resultView(state: TuiState) {
               id: "result-content",
               items: lines,
               itemHeight: 1,
+              focusConfig: { contentStyle: { underline: false } },
               renderItem: (line: string, index: number, focused: boolean) =>
                   ui.text(line || " ", {
                       key: String(index),
