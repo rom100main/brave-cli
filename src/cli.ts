@@ -44,6 +44,15 @@ export function createCli(): Command {
         .option("--global", "Install globally in ~/.agents/skills/")
         .action(installSkill);
 
+    program
+        .command("tui")
+        .description("Interactive TUI for searching the web")
+        .argument("[query]", "Initial search query")
+        .action(async (query?: string) => {
+            const { runTui } = await import("./tui/index.js");
+            await runTui(query);
+        });
+
     return program;
 }
 
