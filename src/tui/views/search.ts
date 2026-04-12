@@ -85,6 +85,7 @@ export function searchView(state: TuiState, callbacks: SearchViewCallbacks) {
                 ui.input({
                     id: "search-input",
                     value: state.query,
+                    focusable: false,
                     placeholder: "Search the web...",
                     onInput: (value: string) => callbacks.onQueryChange(value),
                 }),

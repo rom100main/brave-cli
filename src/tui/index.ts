@@ -31,14 +31,9 @@ export async function runTui(initialQuery?: string): Promise<void> {
         resultScrollOffset: 0,
     };
 
-    let focusedWidgetId: string | null = null;
     let currentState: TuiState = initialState;
 
     const app = createNodeApp<TuiState>({ initialState });
-
-    app.onFocusChange((info) => {
-        focusedWidgetId = info.id;
-    });
 
     const performSearch = async (state: TuiState) => {
         const query = state.query.trim();
@@ -108,6 +103,22 @@ export async function runTui(initialQuery?: string): Promise<void> {
     app.onEvent((ev) => {
         if (ev.kind !== "engine") return;
 
+        if (currentState.page === "search" && !currentState.showCountryModal) {
+            if (ev.event.kind === "text") {
+                const char = String.fromCodePoint(ev.event.codepoint);
+                if (char.length === 1 && char >= " " && char <= "~") {
+                    app.update((prev) => ({ ...prev, query: prev.query + char }));
+                }
+            } else if (ev.event.kind === "key" && ev.event.action === "down") {
+                if (ev.event.key === ZR_KEY_BACKSPACE) {
+                    app.update((prev) => ({ ...prev, query: prev.query.slice(0, -1) }));
+                } else if (ev.event.key === ZR_KEY_ENTER) {
+                    performSearch(currentState);
+                }
+            }
+            return;
+        }
+
         if (currentState.showCountryModal) {
             if (ev.event.kind === "text") {
                 const char = String.fromCodePoint(ev.event.codepoint);
@@ -126,8 +137,8 @@ export async function runTui(initialQuery?: string): Promise<void> {
         }
 
         if (ev.event.kind === "key" && ev.event.action === "down" && ev.event.key === ZR_KEY_ENTER) {
-            if (currentState.page === "search" && focusedWidgetId === "search-input") {
-                performSearch(currentState);
+            if (currentState.page === "result" && currentState.selectedResult) {
+                openResult(currentState.selectedResult);
             }
         }
     });
