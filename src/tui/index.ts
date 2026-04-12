@@ -1,4 +1,4 @@
-import { ZR_KEY_BACKSPACE, ZR_KEY_ENTER } from "@rezi-ui/core/keybindings";
+import { ZR_KEY_BACKSPACE, ZR_KEY_DOWN, ZR_KEY_ENTER, ZR_KEY_UP } from "@rezi-ui/core/keybindings";
 import { createNodeApp } from "@rezi-ui/node";
 import open from "open";
 
@@ -32,8 +32,19 @@ export async function runTui(initialQuery?: string): Promise<void> {
     };
 
     let currentState: TuiState = initialState;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
     const app = createNodeApp<TuiState>({ initialState });
+
+    const DEBOUNCE_MS = 300;
+
+    const debouncedSearch = () => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const query = currentState.query.trim();
+            if (query) performSearch(currentState);
+        }, DEBOUNCE_MS);
+    };
 
     const performSearch = async (state: TuiState) => {
         const query = state.query.trim();
@@ -108,12 +119,28 @@ export async function runTui(initialQuery?: string): Promise<void> {
                 const char = String.fromCodePoint(ev.event.codepoint);
                 if (char.length === 1 && char >= " " && char <= "~") {
                     app.update((prev) => ({ ...prev, query: prev.query + char }));
+                    debouncedSearch();
                 }
             } else if (ev.event.kind === "key" && ev.event.action === "down") {
                 if (ev.event.key === ZR_KEY_BACKSPACE) {
                     app.update((prev) => ({ ...prev, query: prev.query.slice(0, -1) }));
+                    debouncedSearch();
                 } else if (ev.event.key === ZR_KEY_ENTER) {
-                    performSearch(currentState);
+                    if (currentState.selectedIndex >= 0 && currentState.results[currentState.selectedIndex]) {
+                        openResult(currentState.results[currentState.selectedIndex]);
+                    } else {
+                        performSearch(currentState);
+                    }
+                } else if (ev.event.key === ZR_KEY_DOWN) {
+                    app.update((prev) => ({
+                        ...prev,
+                        selectedIndex: Math.min(prev.selectedIndex + 1, prev.results.length - 1),
+                    }));
+                } else if (ev.event.key === ZR_KEY_UP) {
+                    app.update((prev) => ({
+                        ...prev,
+                        selectedIndex: Math.max(prev.selectedIndex - 1, 0),
+                    }));
                 }
             }
             return;

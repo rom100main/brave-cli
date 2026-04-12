@@ -39,12 +39,14 @@ export function searchView(state: TuiState, callbacks: SearchViewCallbacks) {
                   id: "results-list",
                   items: state.results,
                   itemHeight: 4,
-                  focusConfig: { contentStyle: { underline: false } },
-                  renderItem: (result: SearchResult, index: number, focused: boolean) =>
+                  keyboardNavigation: false,
+                  focusable: false,
+                  focusConfig: { indicator: "none" },
+                  renderItem: (result: SearchResult, index: number) =>
                       ui.column({ gap: 0 }, [
-                          ui.text(focused ? `> ${result.title}` : `  ${result.title}`, {
+                          ui.text(index === state.selectedIndex ? `> ${result.title}` : `  ${result.title}`, {
                               key: `title-${index}`,
-                              style: focused ? { bold: true, fg: CYAN } : {},
+                              style: index === state.selectedIndex ? { bold: true, fg: CYAN } : {},
                           }),
                           ui.text(`  ${result.url}`, {
                               key: `url-${index}`,
