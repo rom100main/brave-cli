@@ -1,4 +1,6 @@
 import { rgb, ui } from "@rezi-ui/core";
+import he from "he";
+import { NodeHtmlMarkdown } from "node-html-markdown";
 
 import type { SearchResult } from "../../types.js";
 import { COUNTRIES, type Country } from "../../utils/countries.js";
@@ -7,6 +9,16 @@ import { FRESHNESS_LABELS } from "../state.js";
 
 const CYAN = rgb(0, 255, 255);
 const RED = rgb(255, 0, 0);
+
+function cleanText(text: string): string {
+    const decoded = he.decode(text);
+    return NodeHtmlMarkdown.translate(decoded);
+}
+
+function truncate(text: string, maxLen: number): string {
+    if (text.length <= maxLen) return text;
+    return text.slice(0, maxLen - 3) + "…"; // -1 for … char and -2 for virtual list
+}
 
 export function searchView(state: TuiState, callbacks: SearchViewCallbacks) {
     const filterBar = ui.row({ gap: 1 }, [
@@ -37,7 +49,7 @@ export function searchView(state: TuiState, callbacks: SearchViewCallbacks) {
                               key: `url-${index}`,
                               style: { dim: true },
                           }),
-                          ui.text(`  ${result.description}`, {
+                          ui.text(`  ${truncate(cleanText(result.description), process.stdout.columns ?? 80)}`, {
                               key: `desc-${index}`,
                               style: { dim: true },
                           }),
