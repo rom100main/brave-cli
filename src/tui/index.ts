@@ -1,4 +1,4 @@
-import { ZR_KEY_BACKSPACE, ZR_KEY_ENTER } from "@rezi-ui/core/keybindings";
+import { ZR_KEY_BACKSPACE } from "@rezi-ui/core/keybindings";
 import { createNodeApp } from "@rezi-ui/node";
 import open from "open";
 
