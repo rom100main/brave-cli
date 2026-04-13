@@ -111,6 +111,7 @@ function countryModal(state: TuiState, callbacks: SearchViewCallbacks) {
     return ui.dialog({
         id: "country-dialog",
         title: "Select Country",
+        backdrop: { variant: "opaque" },
         message: ui.column({ gap: 1 }, [
             ui.text(
                 state.countryFilter
