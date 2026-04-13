@@ -97,9 +97,11 @@ export async function runTui(initialQuery?: string): Promise<void> {
         },
         selectCountry: (country: Country) => {
             app.update((prev) => ({ ...prev, country, showCountryModal: false, countryFilter: "" }));
+            debouncedSearch();
         },
         clearCountry: () => {
             app.update((prev) => ({ ...prev, country: null, showCountryModal: false, countryFilter: "" }));
+            debouncedSearch();
         },
         closeCountryModal: () => {
             app.update((prev) => ({ ...prev, showCountryModal: false, countryFilter: "" }));
@@ -173,6 +175,7 @@ export async function runTui(initialQuery?: string): Promise<void> {
                     const next = FRESHNESS_CYCLE[(idx + 1) % FRESHNESS_CYCLE.length];
                     return { ...prev, freshness: next };
                 });
+                debouncedSearch();
             }
         },
         "ctrl+s": () => {
@@ -183,6 +186,7 @@ export async function runTui(initialQuery?: string): Promise<void> {
                     const next = SAFE_SEARCH_CYCLE[(idx + 1) % SAFE_SEARCH_CYCLE.length];
                     return { ...prev, safeSearch: next };
                 });
+                debouncedSearch();
             }
         },
         "ctrl+o": async () => {
