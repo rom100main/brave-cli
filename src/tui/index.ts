@@ -187,9 +187,11 @@ export async function runTui(initialQuery?: string): Promise<void> {
         },
         "ctrl+o": async () => {
             if (currentState.showCountryModal) return;
-            if (currentState.page === "search" && currentState.selectedIndex >= 0) {
-                const result = currentState.results[currentState.selectedIndex];
-                if (result) await open(result.url);
+            if (currentState.page === "search") {
+                const q = currentState.query.trim();
+                if (q) {
+                    await open(`https://search.brave.com/search?q=${encodeURIComponent(q)}`);
+                }
             } else if (currentState.page === "result" && currentState.selectedResult) {
                 await open(currentState.selectedResult.url);
             }
