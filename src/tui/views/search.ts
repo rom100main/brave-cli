@@ -39,14 +39,12 @@ export function searchView(state: TuiState, callbacks: SearchViewCallbacks) {
                   id: "results-list",
                   items: state.results,
                   itemHeight: 4,
-                  keyboardNavigation: false,
-                  focusable: false,
-                  focusConfig: { indicator: "none" },
-                  renderItem: (result: SearchResult, index: number) =>
+                  focusConfig: { contentStyle: { underline: false } },
+                  renderItem: (result: SearchResult, index: number, focused: boolean) =>
                       ui.column({ gap: 0 }, [
-                          ui.text(index === state.selectedIndex ? `> ${result.title}` : `  ${result.title}`, {
+                          ui.text(focused ? `> ${result.title}` : `  ${result.title}`, {
                               key: `title-${index}`,
-                              style: index === state.selectedIndex ? { bold: true, fg: CYAN } : {},
+                              style: focused ? { bold: true, fg: CYAN } : {},
                           }),
                           ui.text(`  ${result.url}`, {
                               key: `url-${index}`,
@@ -83,17 +81,19 @@ export function searchView(state: TuiState, callbacks: SearchViewCallbacks) {
 
     return ui.layers([
         ui.page({
-            body: ui.column({ gap: 0 }, [
-                ui.input({
-                    id: "search-input",
-                    value: state.query,
-                    focusable: false,
-                    placeholder: "Search the web...",
-                    onInput: (value: string) => callbacks.onQueryChange(value),
-                }),
-                filterBar,
-                ui.divider(),
-                body,
+            body: ui.focusTrap({ id: "search-trap", active: true, initialFocus: "results-list" }, [
+                ui.column({ gap: 0 }, [
+                    ui.input({
+                        id: "search-input",
+                        value: state.query,
+                        focusable: false,
+                        placeholder: "Search the web...",
+                        onInput: (value: string) => callbacks.onQueryChange(value),
+                    }),
+                    filterBar,
+                    ui.divider(),
+                    body,
+                ]),
             ]),
             footer: statusBar,
         }),

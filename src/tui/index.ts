@@ -1,4 +1,4 @@
-import { ZR_KEY_BACKSPACE, ZR_KEY_DOWN, ZR_KEY_ENTER, ZR_KEY_UP } from "@rezi-ui/core/keybindings";
+import { ZR_KEY_BACKSPACE, ZR_KEY_ENTER } from "@rezi-ui/core/keybindings";
 import { createNodeApp } from "@rezi-ui/node";
 import open from "open";
 
@@ -125,22 +125,6 @@ export async function runTui(initialQuery?: string): Promise<void> {
                 if (ev.event.key === ZR_KEY_BACKSPACE) {
                     app.update((prev) => ({ ...prev, query: prev.query.slice(0, -1) }));
                     debouncedSearch();
-                } else if (ev.event.key === ZR_KEY_ENTER) {
-                    if (currentState.selectedIndex >= 0 && currentState.results[currentState.selectedIndex]) {
-                        openResult(currentState.results[currentState.selectedIndex]);
-                    } else {
-                        performSearch(currentState);
-                    }
-                } else if (ev.event.key === ZR_KEY_DOWN) {
-                    app.update((prev) => ({
-                        ...prev,
-                        selectedIndex: Math.min(prev.selectedIndex + 1, prev.results.length - 1),
-                    }));
-                } else if (ev.event.key === ZR_KEY_UP) {
-                    app.update((prev) => ({
-                        ...prev,
-                        selectedIndex: Math.max(prev.selectedIndex - 1, 0),
-                    }));
                 }
             }
             return;
@@ -161,12 +145,6 @@ export async function runTui(initialQuery?: string): Promise<void> {
                 }
             }
             return;
-        }
-
-        if (ev.event.kind === "key" && ev.event.action === "down" && ev.event.key === ZR_KEY_ENTER) {
-            if (currentState.page === "result" && currentState.selectedResult) {
-                openResult(currentState.selectedResult);
-            }
         }
     });
 

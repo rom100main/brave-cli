@@ -49,11 +49,13 @@ export function resultView(state: TuiState) {
           });
 
     return ui.page({
-        body: ui.column({ gap: 0 }, [
-            ui.text(state.selectedResult.title, { style: { bold: true } }),
-            ui.text(state.selectedResult.url, { style: { fg: BLUE } }),
-            ui.divider(),
-            content,
+        body: ui.focusTrap({ id: "result-trap", active: true, initialFocus: "result-content" }, [
+            ui.column({ gap: 0 }, [
+                ui.text(state.selectedResult.title, { style: { bold: true } }),
+                ui.text(state.selectedResult.url, { style: { fg: BLUE } }),
+                ui.divider(),
+                content,
+            ]),
         ]),
         footer: ui.statusBar({
             left: [ui.kbd("↑↓"), ui.text("scroll", { style: { dim: true } })],
