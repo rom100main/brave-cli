@@ -5,7 +5,6 @@ import * as readline from "readline";
 import { Command } from "commander";
 
 import { DEFAULT_COUNT, DEFAULT_FRESHNESS, DEFAULT_SAFE_SEARCH } from "./config.js";
-import { formatResultsJson } from "./output/json.js";
 import { formatResultsMarkdown } from "./output/markdown.js";
 import { search } from "./search/api.js";
 import type { FreshnessLevel, SafeSearchLevel, SearchConfig } from "./types.js";
@@ -143,7 +142,7 @@ async function handleCommand(query: string | undefined, options: CliOptions): Pr
     const response = await search(config);
 
     if (options.json) {
-        console.log(formatResultsJson(response.results));
+        console.log(JSON.stringify(response.results, null, 2));
     } else {
         console.log(formatResultsMarkdown(response.results));
     }
