@@ -1,10 +1,11 @@
 {
     "name": "@rom100main/brave-cli",
     "version": "1.0.0",
-    "description": "CLI tool for searching the web using Brave Search API, includes a skill for AI agents.",
+    "description": "CLI tool and interactive TUI for searching the web using Brave Search API, includes a skill for AI agents.",
     "author": "rom100main",
     "keywords": [
         "cli",
+        "tui",
         "search",
         "brave",
         "brave-search",
