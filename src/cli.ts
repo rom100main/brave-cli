@@ -56,7 +56,7 @@ export function createCli(): Command {
 }
 
 const SKILL_CONTENT = `---
-name: brave-skill
+name: brave-search
 description: Search the web using Brave Search API. Use when the user asks to search for information, find websites, or look up topics online.
 ---
 To search the web, run the following command:
@@ -90,8 +90,8 @@ interface SkillOptions {
 async function installSkill(options: SkillOptions): Promise<void> {
     const homeDir = process.env.HOME || process.env.USERPROFILE || "~";
     const skillDir = options.global
-        ? path.join(homeDir, ".agents", "skills", "brave-skill")
-        : path.join(process.cwd(), ".agents", "skills", "brave-skill");
+        ? path.join(homeDir, ".agents", "skills", "brave-search")
+        : path.join(process.cwd(), ".agents", "skills", "brave-search");
     const skillFile = path.join(skillDir, "SKILL.md");
 
     try {
