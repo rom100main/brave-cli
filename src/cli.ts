@@ -4,6 +4,9 @@ import * as readline from "readline";
 
 import { Command } from "commander";
 
+import packageJson from "../package.json" with { type: "json" };
+const { version } = packageJson;
+
 import { DEFAULT_COUNT, DEFAULT_FRESHNESS, DEFAULT_SAFE_SEARCH } from "./config.js";
 import { formatResultsMarkdown } from "./output/markdown.js";
 import { search } from "./search/api.js";
@@ -27,6 +30,7 @@ export function createCli(): Command {
     program
         .name("brave")
         .description("Brave Search CLI tool")
+        .version(version)
         .argument("[query]", "Search query")
         .option("--count <n>", "Number of results to return")
         .option("--country <code>", "Country code (e.g., US, DE)")
