@@ -1,30 +1,8 @@
-import { rgb, ui } from "@rezi-ui/core";
+import { ui } from "@rezi-ui/core";
 
+import { BLUE } from "../colors.js";
+import { parseAndWrapMarkdown, type MdToken } from "../markdown.js";
 import type { TuiState } from "../state.js";
-
-const BLUE = rgb(100, 149, 237);
-
-function wrapLines(text: string, width: number): string[] {
-    if (width <= 0) return text.split("\n");
-
-    const result: string[] = [];
-    for (const line of text.split("\n")) {
-        if (line.length === 0) {
-            result.push("");
-            continue;
-        }
-        let remaining = line;
-        while (remaining.length > width) {
-            let breakAt = width;
-            const spaceIdx = remaining.lastIndexOf(" ", width);
-            if (spaceIdx > 0) breakAt = spaceIdx;
-            result.push(remaining.slice(0, breakAt));
-            remaining = remaining.slice(breakAt).trimStart();
-        }
-        if (remaining.length > 0) result.push(remaining);
-    }
-    return result;
-}
 
 export function resultView(state: TuiState) {
     if (!state.selectedResult) {
@@ -32,7 +10,7 @@ export function resultView(state: TuiState) {
     }
 
     const cols = process.stdout.columns ?? 80;
-    const lines = wrapLines(state.resultContent || "No content available.", cols);
+    const lines = parseAndWrapMarkdown(state.resultContent || "No content available.", cols);
 
     const content = state.resultLoading
         ? ui.spinner({ label: "Loading page..." })
@@ -41,11 +19,16 @@ export function resultView(state: TuiState) {
               items: lines,
               itemHeight: 1,
               focusConfig: { contentStyle: { underline: false } },
-              renderItem: (line: string, index: number, focused: boolean) =>
-                  ui.text(line || " ", {
-                      key: String(index),
-                      style: focused ? { bold: true } : {},
-                  }),
+              renderItem: (tokens: MdToken[], index: number, focused: boolean) =>
+                  ui.row(
+                      { gap: 0, key: String(index) },
+                      tokens.map((t, i) =>
+                          ui.text(t.text || " ", {
+                              key: `t-${i}`,
+                              style: focused ? { ...t.style, bold: true } : t.style,
+                          }),
+                      ),
+                  ),
           });
 
     return ui.page({

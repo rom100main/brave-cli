@@ -1,14 +1,12 @@
-import { rgb, ui } from "@rezi-ui/core";
+import { ui } from "@rezi-ui/core";
 import he from "he";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 
 import type { SearchResult } from "../../types.js";
 import { COUNTRIES, type Country } from "../../utils/countries.js";
+import { CYAN, RED } from "../colors.js";
 import type { TuiState } from "../state.js";
 import { FRESHNESS_LABELS } from "../state.js";
-
-const CYAN = rgb(0, 255, 255);
-const RED = rgb(255, 0, 0);
 
 function cleanText(text: string): string {
     const decoded = he.decode(text);
