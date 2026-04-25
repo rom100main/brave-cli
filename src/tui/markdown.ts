@@ -33,6 +33,7 @@ marked.use({ extensions: [wikilinkExtension as any] });
 export interface MdToken {
     text: string;
     style: TextStyle;
+    href?: string;
 }
 
 export function wrapTokenLines(tokens: MdToken[], maxCols: number, wrapIndent = ""): MdToken[][] {
@@ -45,10 +46,10 @@ export function wrapTokenLines(tokens: MdToken[], maxCols: number, wrapIndent = 
         const parts = token.text.split("\n");
         for (let i = 0; i < parts.length; i++) {
             if (parts[i].length > 0) {
-                splitTokens.push({ text: parts[i], style: token.style });
+                splitTokens.push({ text: parts[i], style: token.style, href: token.href });
             }
             if (i < parts.length - 1) {
-                splitTokens.push({ text: "\n", style: token.style });
+                splitTokens.push({ text: "\n", style: token.style, href: token.href });
             }
         }
     }
@@ -80,11 +81,11 @@ export function wrapTokenLines(tokens: MdToken[], maxCols: number, wrapIndent = 
             }
 
             if (remainingText.length <= spaceLeft) {
-                currentLine.push({ text: remainingText, style: token.style });
+                currentLine.push({ text: remainingText, style: token.style, href: token.href });
                 currentLength += remainingText.length;
                 remainingText = "";
             } else {
-                currentLine.push({ text: remainingText.substring(0, spaceLeft), style: token.style });
+                currentLine.push({ text: remainingText.substring(0, spaceLeft), style: token.style, href: token.href });
                 lines.push(currentLine);
                 currentLine = [];
                 currentLength = 0;
@@ -129,6 +130,7 @@ function renderInline(tokens: Token[] | undefined, currentStyle: TextStyle = {})
                 result.push({
                     text: (token as Tokens.Generic).text,
                     style: { ...currentStyle, fg: BLUE, underline: true },
+                    href: (token as Tokens.Link).href || (token as Tokens.Generic).text,
                 });
                 break;
             case "image":
