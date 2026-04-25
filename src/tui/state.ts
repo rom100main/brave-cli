@@ -3,6 +3,14 @@ import type { Country } from "../utils/countries.js";
 
 export type TuiPage = "search" | "result";
 
+export interface NavigationEntry {
+    page: TuiPage;
+    query?: string;
+    result?: SearchResult | null;
+    content?: string;
+    cursorX?: number;
+}
+
 export interface TuiState {
     page: TuiPage;
     query: string;
@@ -19,6 +27,8 @@ export interface TuiState {
     resultContent: string;
     resultLoading: boolean;
     resultScrollOffset: number;
+    resultCursorX: number;
+    navigationHistory: NavigationEntry[];
 }
 
 export const SAFE_SEARCH_CYCLE: SafeSearchLevel[] = ["off", "moderate", "strict"];
