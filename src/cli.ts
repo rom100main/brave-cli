@@ -85,6 +85,9 @@ brave "react hooks" --count 10
 brave "ai news" --freshness day --json
 brave "python" --country US --safe-search strict
 \`\`\`
+
+If not installed: \`npm install -g @rom100main/brave-cli\`
+If not authenticated: \`brave auth\`
 `;
 
 interface SkillOptions {
