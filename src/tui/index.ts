@@ -1,3 +1,5 @@
+import { URL } from "node:url";
+
 import { ZR_KEY_BACKSPACE } from "@rezi-ui/core/keybindings";
 import { createNodeApp } from "@rezi-ui/node";
 import open from "open";
@@ -7,7 +9,7 @@ import { search } from "../search/api.js";
 import type { SearchConfig, SearchResult } from "../types.js";
 import type { Country } from "../utils/countries.js";
 
-import { FRESHNESS_CYCLE, SAFE_SEARCH_CYCLE, type TuiState } from "./state.js";
+import { FRESHNESS_CYCLE, SAFE_SEARCH_CYCLE, type NavigationEntry, type TuiState } from "./state.js";
 import { fetchPageContent } from "./utils/fetcher.js";
 import { resultView } from "./views/result.js";
 import { searchView, type SearchViewCallbacks } from "./views/search.js";
@@ -29,6 +31,8 @@ export async function runTui(initialQuery?: string): Promise<void> {
         resultContent: "",
         resultLoading: false,
         resultScrollOffset: 0,
+        resultCursorX: 0,
+        navigationHistory: [],
     };
 
     let currentState: TuiState = initialState;
@@ -68,6 +72,14 @@ export async function runTui(initialQuery?: string): Promise<void> {
     };
 
     const openResult = async (result: SearchResult) => {
+        const historyEntry: NavigationEntry = {
+            page: currentState.page,
+            query: currentState.query,
+            result: currentState.selectedResult,
+            content: currentState.resultContent,
+            cursorX: currentState.resultCursorX,
+        };
+
         app.update((prev) => ({
             ...prev,
             page: "result",
@@ -75,12 +87,61 @@ export async function runTui(initialQuery?: string): Promise<void> {
             resultLoading: true,
             resultContent: "",
             resultScrollOffset: 0,
+            resultCursorX: 0,
+            navigationHistory: [...prev.navigationHistory, historyEntry],
         }));
         try {
             const content = await fetchPageContent(result.url);
             app.update((prev) => ({ ...prev, resultContent: content, resultLoading: false }));
         } catch {
             app.update((prev) => ({ ...prev, resultContent: "Failed to load page content.", resultLoading: false }));
+        }
+    };
+
+    const openLink = async (href: string) => {
+        let title = href;
+        try {
+            const urlObj = new URL(href);
+            title = urlObj.hostname + urlObj.pathname;
+        } catch {
+            // Keep original href
+        }
+
+        const syntheticResult: SearchResult = {
+            title,
+            url: href,
+            description: "",
+        };
+        await openResult(syntheticResult);
+    };
+
+    const goBack = () => {
+        const history = [...currentState.navigationHistory];
+        const previous = history.pop();
+
+        if (!previous) {
+            app.stop();
+            return;
+        }
+
+        if (previous.page === "search") {
+            app.update((prev) => ({
+                ...prev,
+                page: "search",
+                selectedResult: null,
+                resultContent: "",
+                resultCursorX: 0,
+                navigationHistory: history,
+            }));
+        } else if (previous.page === "result") {
+            app.update((prev) => ({
+                ...prev,
+                page: "result",
+                selectedResult: previous.result ?? null,
+                resultContent: previous.content ?? "",
+                resultCursorX: previous.cursorX ?? 0,
+                navigationHistory: history,
+            }));
         }
     };
 
@@ -108,9 +169,13 @@ export async function runTui(initialQuery?: string): Promise<void> {
         },
     };
 
+    const resultCallbacks = {
+        openLink,
+    };
+
     app.view((state) => {
         currentState = state;
-        return state.page === "search" ? searchView(state, searchCallbacks) : resultView(state);
+        return state.page === "search" ? searchView(state, searchCallbacks) : resultView(state, resultCallbacks);
     });
 
     app.onEvent((ev) => {
@@ -155,11 +220,20 @@ export async function runTui(initialQuery?: string): Promise<void> {
             const s = ctx.state;
             if (s.showCountryModal) {
                 ctx.update((prev) => ({ ...prev, showCountryModal: false, countryFilter: "" }));
-            } else if (s.page === "result") {
-                ctx.update((prev) => ({ ...prev, page: "search", selectedResult: null, resultContent: "" }));
             } else {
-                app.stop();
+                goBack();
             }
+        },
+        "ctrl+h": () => {
+            if (currentState.showCountryModal) return;
+            app.update((prev) => ({
+                ...prev,
+                page: "search",
+                selectedResult: null,
+                resultContent: "",
+                resultCursorX: 0,
+                navigationHistory: [],
+            }));
         },
         "ctrl+r": () => {
             if (currentState.showCountryModal) return;
@@ -198,6 +272,16 @@ export async function runTui(initialQuery?: string): Promise<void> {
                 }
             } else if (currentState.page === "result" && currentState.selectedResult) {
                 await open(currentState.selectedResult.url);
+            }
+        },
+        left: () => {
+            if (currentState.page === "result") {
+                app.update((prev) => ({ ...prev, resultCursorX: Math.max(0, prev.resultCursorX - 1) }));
+            }
+        },
+        right: () => {
+            if (currentState.page === "result") {
+                app.update((prev) => ({ ...prev, resultCursorX: prev.resultCursorX + 1 }));
             }
         },
     });
